@@ -1,9 +1,10 @@
 package org.bridge;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringUtils {
+public class StringUtil {
     /**
      * <p>1</p>
      * <p>方法名称: arrayInsertArray|描述: 数组插入到另一个数组特定位置</p>
@@ -70,6 +71,22 @@ public class StringUtils {
         Matcher m = p.matcher(source);
         String ret=m.replaceAll(newString);
         return ret;
+    }
+
+    /**
+     * <p>4</p>
+     * <p>方法名称: isIE|描述: 是否为IE处理器</p>
+     * @author ixiaobai
+     * @param agent 原字符串
+     * @return
+     */
+    public static boolean isIE(String agent){
+        if(isNullOrEmpty(agent)) return false;
+        agent = agent.toLowerCase();
+        return agent.indexOf("msie")>0 || (agent.indexOf("gecko")>0 && agent.indexOf("rv:11")>0);
+    }
+    public static boolean isIE(HttpServletRequest request){
+        return isIE(request.getHeader("USER-AGENT"));
     }
 
 }
