@@ -2,6 +2,8 @@ package org.bridge;
 
 import org.junit.Test;
 
+import java.util.Date;
+
 public class StringUtilTest {
     @Test
     public void arrayInsertArrayTest(){
