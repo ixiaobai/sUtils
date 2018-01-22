@@ -308,7 +308,8 @@ public class Uploader {
 	 * @return
 	 */
 	private String getPhysicalPath(String path) {
-		return PropertyUtil.getProperty("web_address")+File.separator+"upload"+File.separator+path;
+//		return PropertyUtil.getProperty("web_address")+File.separator+"upload"+File.separator+path;
+		return "";
 	}
 
 	/**
