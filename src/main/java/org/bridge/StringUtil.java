@@ -2,6 +2,8 @@ package org.bridge;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -261,5 +263,39 @@ public class StringUtil {
             e.printStackTrace();
         }
         return result;
+    }
+
+    /**二进制数组转化为16进制字符串
+     * @param b
+     * @return
+     */
+    public static String byte2hex(byte[] b){
+        String hs="";
+        String stmp="";
+        for (int n=0; n<b.length; n++){
+            stmp=(java.lang.Integer.toHexString(b[n] & 0xFF));
+            if (stmp.length()==1) hs=hs+"0"+stmp;
+            else hs=hs+stmp;
+        }
+        return hs;
+    }
+
+    /**MD5加密
+     * @param s 要加密的字符串
+     * @return 加密后的字符串
+     */
+    public static String encodeToMD5(String s){
+        MessageDigest md=null;
+        try {
+            md = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        md.update(s.getBytes());
+        byte[] bR=md.digest();
+        for(int i=0;i<bR.length;i++){
+
+        }
+        return byte2hex(bR).toUpperCase();
     }
 }

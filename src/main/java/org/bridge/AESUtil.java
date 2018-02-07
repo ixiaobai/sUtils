@@ -1,22 +1,17 @@
-package com.nb.common.util;
+package org.bridge;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import net.sf.json.JSONArray;
-
 import org.apache.commons.codec.binary.Base64;
 
-import com.ec.common.util.StringUtil;
-import com.nb.dept.model.DeptOpinionModel;
 
 /**
  * 
@@ -92,7 +87,7 @@ public class AESUtil {
 	/**
 	 * 
 	 * <p>方法名称: encodeJson|描述: 加密</p>
-	 * @param jsonArray
+	 * @param object
 	 * @return
 	 */
 	public static String encodeJson(Object object) {
@@ -140,23 +135,20 @@ public class AESUtil {
 //		String s1 = AESUtil.encrypt(s);
 //		System.out.println("加密:" + s1);
 //		System.out.println("解密:" + AESUtil.decrypt(s1));
-		
+
 		DeptOpinionModel deptOpinion = new DeptOpinionModel();
 		deptOpinion.setId(1);
+		deptOpinion.setTitle("标题");
 		deptOpinion.setContent("内容部分**123~.。");
-		deptOpinion.setCreate_user("xb");
-		deptOpinion.setCreate_time(new Date());
-		deptOpinion.setCreate_time_string(StringUtil.dateToString(new Date(), "yyyy-MM-dd"));
+		deptOpinion.setUser_code("xb");
 		
 		JSONArray array=JSONArray.fromObject(deptOpinion);
-		System.out.println("原句："+array.get(0));
+		System.out.println("原句:"+array.get(0));
 		
 		String decodeStr = AESUtil.encodeJson(deptOpinion);
-		System.out.println("传输中："+decodeStr);
+		System.out.println("传输中:"+decodeStr);
 		
-		System.out.println("解密并核对后："+AESUtil.decodeJson(decodeStr).toString());
-		
-		
-		System.out.println(AESUtil.decodeJson("联合年报"));
+		System.out.println("解密并核对后:"+AESUtil.decodeJson(decodeStr).toString());
+
 	}
 }
