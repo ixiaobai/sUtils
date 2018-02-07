@@ -1,7 +1,8 @@
-package org.bridge;
+package com.nb.common.util;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,7 +11,12 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import net.sf.json.JSONArray;
+
 import org.apache.commons.codec.binary.Base64;
+
+import com.ec.common.util.StringUtil;
+import com.nb.dept.model.DeptOpinionModel;
 
 /**
  * 
@@ -30,7 +36,7 @@ public class AESUtil {
 	 * @param content 待加密内容
 	 * @return 返回Base64转码后的加密数据
 	 */
-	public static String encrypt(String content) {
+	private static String encrypt(String content) {
 		try {
 			Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);// 创建密码器
 			byte[] byteContent = content.getBytes("utf-8");
@@ -48,7 +54,7 @@ public class AESUtil {
 	 * @param content
 	 * @return 返回解密后的字符串
 	 */
-	public static String decrypt(String content) {
+	private static String decrypt(String content) {
 		try {
 			// 实例化
 			Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
@@ -83,13 +89,74 @@ public class AESUtil {
 		return null;
 	}
 	
-	public static void main(String[] args) {
-		System.out.println("PASSWORD:"+PASSWORD);
-		String s = "hello,您好,dsafsafidsaiofiosdafiosd放到防守发哦一都我告诉爱哦施工队港交所的骄傲过凶巴巴 是打发ID覅偶撒酒疯is大姐夫iOS见覅欧锦赛伏见司发发送对接覅圣诞节覅机电司哦啊见覅圣诞节覅将发送带发酵萨迪时间啊迪欧伏见司爱打飞机啥都平均分师大肌肤决赛破飞机上打破附件iOS爬到发ISO都怕就发兄弟撒娇佛萨基哦发动机赛欧批发价is阿斗平均分iOS大盘鸡覅偶深怕的加分撒的加分IP是大家fisdapfisdaufewjf8sajf偏大附件师大肌肤iOS大盘鸡费帕金森佛教第四票房就是啊飞机手帕见覅配送费及撒娇发的";
-		System.out.println("原句:" + s);
-		String s1 = AESUtil.encrypt(s);
-		System.out.println("加密:" + s1);
-		System.out.println("解密:" + AESUtil.decrypt(s1));
+	/**
+	 * 
+	 * <p>方法名称: encodeJson|描述: 加密</p>
+	 * @param jsonArray
+	 * @return
+	 */
+	public static String encodeJson(Object object) {
+		try {
+			if(null!=object) {
+				JSONArray jsonArray = JSONArray.fromObject(object);
+				jsonArray.add(StringUtil.encodeToMD5(jsonArray.get(0).toString()));
+				return AESUtil.encrypt(jsonArray.toString());
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(AESUtil.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
 	}
-
+	
+	/**
+	 * 
+	 * <p>方法名称: decodeJson|描述: 解密</p>
+	 * @param jsonStr
+	 * @return
+	 */
+	public static Object decodeJson(String jsonStr) {
+		try {
+			if(!StringUtil.isNullOrEmpty(jsonStr)) {
+				jsonStr = AESUtil.decrypt(jsonStr);
+				JSONArray jsonArray = JSONArray.fromObject(jsonStr);
+				if(jsonArray.size()>1) {
+					String Nmd5 = StringUtil.encodeToMD5(jsonArray.get(0).toString());
+					String Omd5 = jsonArray.get(1).toString();
+					if(Nmd5.equals(Omd5)) {
+						return jsonArray.get(0);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Logger.getLogger(AESUtil.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		return null;
+	}
+	
+	public static void main(String[] args) {
+//		System.out.println("PASSWORD:"+PASSWORD);
+//		String s = "[ {\"UserID\":11, \"Name\":{\"FirstName\":\"Truly\",\"LastName\":\"Zhu\"}, \"Email\":\"zhuleipro◎hotmail.com\"}, {\"UserID\":12, \"Name\":{\"FirstName\":\"Jeffrey\",\"LastName\":\"Richter\"}, \"Email\":\"xxx◎xxx.com\"}, {\"UserID\":13, \"Name\":{\"FirstName\":\"Scott\",\"LastName\":\"Gu\"}, \"Email\":\"xxx2◎xxx2.com\"} ]";
+//		System.out.println("原句:" + s);
+//		String s1 = AESUtil.encrypt(s);
+//		System.out.println("加密:" + s1);
+//		System.out.println("解密:" + AESUtil.decrypt(s1));
+		
+		DeptOpinionModel deptOpinion = new DeptOpinionModel();
+		deptOpinion.setId(1);
+		deptOpinion.setContent("内容部分**123~.。");
+		deptOpinion.setCreate_user("xb");
+		deptOpinion.setCreate_time(new Date());
+		deptOpinion.setCreate_time_string(StringUtil.dateToString(new Date(), "yyyy-MM-dd"));
+		
+		JSONArray array=JSONArray.fromObject(deptOpinion);
+		System.out.println("原句："+array.get(0));
+		
+		String decodeStr = AESUtil.encodeJson(deptOpinion);
+		System.out.println("传输中："+decodeStr);
+		
+		System.out.println("解密并核对后："+AESUtil.decodeJson(decodeStr).toString());
+		
+		
+		System.out.println(AESUtil.decodeJson("联合年报"));
+	}
 }
